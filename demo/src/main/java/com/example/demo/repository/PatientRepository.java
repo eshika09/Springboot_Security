@@ -16,6 +16,7 @@ import java.util.List;
 
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
+
     Patient findByName(String name);
 
     List<Patient> findByBirthDateOrEmail(LocalDate birthDate, String email);
@@ -24,15 +25,17 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     List<Patient> findByNameContainingOrderByIdDesc(String query);
 
-    @Query("SELECT p FROM Patient p where p.bloodGroup = ?1")
+    @Query("SELECT p FROM Patient p where p.bloodGroup = :bloodGroup")
     List<Patient> findByBloodGroup(@Param("bloodGroup") String bloodGroup);
 
     @Query("select p from Patient p where p.birthDate > :birthDate")
     List<Patient> findByBornAfterDate(@Param("birthDate") LocalDate birthDate);
 
-    @Query("select new com.codingshuttle.youtube.hospitalManagement.dto.BloodGroupCountResponseEntity(p.bloodGroup," +
-            " Count(p)) from Patient p group by p.bloodGroup")
-//    List<Object[]> countEachBloodGroupType();
+    @Query(
+            "select new com.example.demo.dto.BloodGroupCountResponseEntity(" +
+                    "p.bloodGroup, count(p)) " +
+                    "from Patient p group by p.bloodGroup"
+    )
     List<BloodGroupCountResponseEntity> countEachBloodGroupType();
 
     @Query(value = "select * from patient", nativeQuery = true)
@@ -43,9 +46,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     @Query("UPDATE Patient p SET p.name = :name where p.id = :id")
     int updateNameWithId(@Param("name") String name, @Param("id") Long id);
 
-
-    //    @Query("SELECT p FROM Patient p LEFT JOIN FETCH p.appointments a LEFT JOIN FETCH a.doctor")
     @Query("SELECT p FROM Patient p LEFT JOIN FETCH p.appointments")
     List<Patient> findAllPatientWithAppointment();
-
 }
