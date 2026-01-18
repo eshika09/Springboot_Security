@@ -16,7 +16,7 @@ import java.util.List;
 public class HospitalController {
     private final DoctorService doctorService;
 
-    @GetMapping("/doctors")
+    @GetMapping("/doctor")
     public ResponseEntity<List<DoctorResponseDto>> getAllDoctors() {
         return ResponseEntity.ok(doctorService.getAllDoctors());
     }
